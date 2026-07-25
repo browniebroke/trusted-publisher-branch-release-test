@@ -1,0 +1,32 @@
+name: Publish Release
+
+concurrency:
+  # stop previous release runs if tag is recreated
+  group: release-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  push:
+    tags:
+      # Order matters, the last rule that applies to a tag
+      # is the one that takes effect:
+      # https://docs.github.com/en/actions/writing-workflows/workflow-syntax-for-github-actions#example-including-and-excluding-branches-and-tags
+      - '*.*.*'
+      # There should be no dev tags created, but to be safe,
+      # let's not publish them.
+      - '!*.*.*.dev*'
+
+jobs:
+  build:
+    name: Debug branch
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7.0.0
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.x"
+      - name: show folder content
+        run: ls -la
+      - name: show file content
+        run: cat content.txt
